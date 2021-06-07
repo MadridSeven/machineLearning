@@ -26,4 +26,26 @@ e = tf.constant([[1, 2], [3, 4]])
 print(e)
 
 # 创建三维张量
-f = tf.constant([[1, 2], [3, 4]])
+f = tf.constant([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])
+print(f)
+
+# 创建字符串
+g = tf.constant('=Hello,TensorFlow')
+print(tf.strings.lower(g))
+
+# 布尔类型标量
+h = tf.constant(True)
+print(h)
+# 布尔类型向量
+h = tf.constant([True, False])
+print(h)
+
+# 指定数值类型张量的精度
+print(tf.constant(123456, dtype=tf.int32))
+print(tf.constant(123456, dtype=tf.int64))
+
+# 需要优化、计算梯度的张量需要用tf.Variable()封装，以便跟踪相关梯度信息，自动求导
+p = tf.constant([-1, 0, 1, 2])
+q = tf.Variable(p)
+r = tf.Variable([[1, 2], [3, 4]])
+print(q), print(r)
