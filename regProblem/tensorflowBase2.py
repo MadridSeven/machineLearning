@@ -96,5 +96,34 @@ print(x[0][1][2][1])
 
 # 切片
 # start(开始读取位置的索引):end(结束的索引(不包含)):step(步长)
+# 取4张32*32大小的彩色图片的第2,3张图片
+print(x[1:3:1])
 
+# 维度变换
+# 改变视图 改变张量的视图，仅仅是改变了张量的理解方式，并不需要该表张量的存储顺序(可以节省计算资源)
+# 改变视图的前提是存储不需要改变
+# 新试图的元素总理与存储区域大小要相等，即新试图的元素数量等于，b*h*w*c
+x = tf.range(96)  # 生成向量
+print(x)
+x = tf.reshape(x, [2, 4, 4, 3])  # 改变x的视图，获得4D张量(存储并未改变)
+print(x)
+# 张量的维度数和形状
+print(x.ndim), print(x.shape)
+
+# 增、删维度
+# 例：28*28的灰度图像，shape为[28,28]，增加一个新的维度，定义为通道数，则shape为[28,28,1]
+x = tf.random.uniform([28, 28], maxval=10, dtype=tf.int32)
+print(x)
+# 通过 tf.expand_dims(x,axis) 可在指定的axis轴前可以插入一个新的维度
+# 在宽维度的后面新增一个维度，定义为通道数，只能增加长度为1的维度
+x = tf.expand_dims(x, axis=2)
+print(x)
+# 在最前面插入一个维度，定义为图片数量维度
+x = tf.expand_dims(x, axis=0)
+print(x)
+
+# 删除维度
+# tf.squeeze(x,axis),axis为待删除维度的索引号(如果不指定会删除所有长度为1的维度)
+x = tf.squeeze(x, axis=0)
+print(x)
 
