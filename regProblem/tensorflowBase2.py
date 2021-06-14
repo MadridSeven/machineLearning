@@ -127,3 +127,16 @@ print(x)
 x = tf.squeeze(x, axis=0)
 print(x)
 
+# 交换维度
+# 交换维度同时改变了张量的存储和视图
+# (0数量、1行、2列、3通道数)
+x = tf.random.normal([2, 32, 32, 3])
+# (数量、通道数、行、列)
+print(tf.transpose(x, perm=[0, 3, 1, 2]))
+
+# 复制数据
+b = tf.constant([1, 2])
+b = tf.expand_dims(b, axis=0)
+print(b)
+b = tf.tile(b, multiples=[2, 1])
+print(b)
