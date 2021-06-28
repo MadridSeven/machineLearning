@@ -1,5 +1,4 @@
 import tensorflow as tf
-import numpy as np
 # 加入忽略
 import os
 
@@ -30,3 +29,9 @@ tf.square(a)
 
 # 指数运算 tf.pow(x,a) x**a
 print(tf.pow(3, a))
+
+# 矩阵相乘 @
+# 相乘的条件是矩阵A的倒数第一个维度长度和B的倒数第二个维度长度相等
+a = tf.random.normal([4, 3, 28, 32])
+b = tf.random.normal([4, 3, 32, 2])
+print(a @ b)
