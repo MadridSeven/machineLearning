@@ -1,3 +1,4 @@
+import numpy as np
 import tensorflow as tf
 import os
 
@@ -29,3 +30,18 @@ print(c.shape)
 a = tf.random.normal([10, 35, 8])
 b = tf.split(a, num_or_size_splits=10, axis=0)
 print(b)
+
+# 数据统计
+# 向量范数： L1范数，向量中所有元素绝对值之和 L2范数，向量中所有元素的平方和开根号，np.inf(无穷范数)向量中所有元素绝对值的最大值
+# tf.norm(x,ord) 求解张量的范数，ord为1、2时 表示计算L1、L2范数，指定为np.inf时为无穷范数
+x = tf.ones([2, 2])
+print(tf.norm(x, ord=1))
+print(tf.norm(x, ord=2))
+print(tf.norm(x, ord=np.inf))
+
+# 最值、均值、和
+# 考虑shape为[4,10]的张量，第一个维度表示样本数量，第二个维度表示当前样本分别属于10个类别的概率
+x = tf.random.normal([4, 10])
+# 统计概率维度上的最大值,返回长度为4的向量，分表表示了每个样本最大的概率值
+print(tf.reduce_max(x, axis=1))
+
