@@ -22,7 +22,7 @@ lr = 1e-3
 # 数据准备
 # (60000, 28, 28) (60000,)  |  (10000, 28, 28) (10000,) 数值的范围为[0,255]
 (x_train, y_train), (x_test, y_test) = keras.datasets.fashion_mnist.load_data()
-# 归一化
+# 归一化，方便神经网络学习
 x_train, x_test = x_train.astype(np.float32) / 255., x_test.astype(np.float32) / 255.
 # 训练集
 # from_tensor_slices 创建数据集
@@ -125,16 +125,16 @@ for epoch in range(100):
         if step % 100 == 0:
             print(epoch, step, float(rec_loss))
 
-        # 测试网络
-        x = next(iter(test_db))
-        logits = model(tf.reshape(x, [-1, 784]))
-        x_hat = tf.sigmoid(logits)
-        # [b, 784] => [b, 28, 28]
-        x_hat = tf.reshape(x_hat, [-1, 28, 28])
+# 测试网络
+x = next(iter(test_db))
+logits = model(tf.reshape(x, [-1, 784]))
+x_hat = tf.sigmoid(logits)
+# [b, 784] => [b, 28, 28]
+x_hat = tf.reshape(x_hat, [-1, 28, 28])
 
-        # [b, 28, 28] => [2b, 28, 28]
-        x_concat = tf.concat([x, x_hat], axis=0)
-        x_concat = x_hat
-        x_concat = x_concat.numpy() * 255.
-        x_concat = x_concat.astype(np.uint8)
-        save_images(x_concat, 'ae_images/rec_epoch_%d.png' % epoch)
+# [b, 28, 28] => [2b, 28, 28]
+x_concat = tf.concat([x, x_hat], axis=0)
+x_concat = x_hat
+x_concat = x_concat.numpy() * 255.
+x_concat = x_concat.astype(np.uint8)
+save_images(x_concat, 'ae_images/rec_epoch_d.png')
