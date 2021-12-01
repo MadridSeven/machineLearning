@@ -6,6 +6,8 @@ from tensorflow.keras import Sequential, layers
 from PIL import Image
 from matplotlib import pyplot as plt
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
 # 设置全局随机因子
 tf.random.set_seed(22)
 np.random.seed(22)
@@ -72,16 +74,31 @@ class AutoEncoder(keras.Model):
         ])
 
     def call(self, inputs, training=None):
-        # [b,784] => [b,20]
+        # [b, 784] => [b, 10]
         h = self.encoder(inputs)
-        # [b,20] => [b,784]
+        # [b, 10] => [b, 784]
         x_hat = self.decoder(h)
+
         return x_hat
+
+
+def save_images(imgs, name):
+    new_im = Image.new('L', (280, 280))
+
+    index = 0
+    for i in range(0, 280, 28):
+        for j in range(0, 280, 28):
+            im = imgs[index]
+            im = Image.fromarray(im, mode='L')
+            new_im.paste(im, (i, j))
+            index += 1
+
+    new_im.save(name)
 
 
 model = AutoEncoder()
 # 训练模型
-model.bulid(input_shape=(None, 784))
+model.build(input_shape=(None, 784))
 # 打印出模型的概述信息
 model.summary()
 # 优化器，定义学习率
@@ -92,7 +109,32 @@ for epoch in range(100):
     for step, x in enumerate(train_db):
         # [b, 28, 28] => [b, 784]
         x = tf.reshape(x, [-1, 784])
-
+        # GradientTape构建梯度计算环境， 被包裹的值可以自动求导
         with tf.GradientTape() as tape:
+            # 模型生成的x
             x_rec_logits = model(x)
+            # 使用交叉熵误差函数
             rec_loss = tf.losses.binary_crossentropy(x, x_rec_logits, from_logits=True)
+            # 误差的标量
+            rec_loss = tf.reduce_mean(rec_loss)
+        # 计算误差关于模型参数的导数(梯度)
+        grads = tape.gradient(rec_loss, model.trainable_variables)
+        # 更新网络参数
+        optimizer.apply_gradients(zip(grads, model.trainable_variables))
+
+        if step % 100 == 0:
+            print(epoch, step, float(rec_loss))
+
+        # 测试网络
+        x = next(iter(test_db))
+        logits = model(tf.reshape(x, [-1, 784]))
+        x_hat = tf.sigmoid(logits)
+        # [b, 784] => [b, 28, 28]
+        x_hat = tf.reshape(x_hat, [-1, 28, 28])
+
+        # [b, 28, 28] => [2b, 28, 28]
+        x_concat = tf.concat([x, x_hat], axis=0)
+        x_concat = x_hat
+        x_concat = x_concat.numpy() * 255.
+        x_concat = x_concat.astype(np.uint8)
+        save_images(x_concat, 'ae_images/rec_epoch_%d.png' % epoch)
